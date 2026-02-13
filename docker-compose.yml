@@ -1,0 +1,90 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+        - blogify-network
+    ports:
+      - "9000:9000"
+    depends_on:
+      - pgsql
+
+  pgsql:
+    image: postgres
+    container_name: laravel_pgsql
+    restart: unless-stopped
+    ports:
+      - target: 5432 #the port in container
+        published: 5200
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-blogify:/var/lib/postgresql/data
+      # - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - blogify-network
+  nginx:
+    image: nginx:alpine
+    container_name: blogify-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - blogify-network
+  # queue-worker:
+  #   build:
+  #     context: ./laravel-best
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   networks:
+  #     - docker-network
+  #   depends_on:
+  #     - db
+  #   command: php artisan queue:work
+  
+  # caddy:
+  #   image: caddy:latest
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - ./laravel-best:/var/www/html
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #   networks:
+  #     - docker-network
+  #   depends_on:
+  #     - app
+
+
+
+  # redis:
+  #   image: bitnami/redis:7.2
+  #   platform: linux/amd64
+  #   ports:
+  #     - 6379:6379
+  #   restart: always
+  #   volumes:
+  #     - redis-data:/bitnami/redis/data
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=no
+  #     - REDIS_PASSWORD=${REDIS_PASSWORD}
+  #     - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+  #   networks:
+  #     - docker-network
+
+volumes:
+  db-blogify:
+  redis-blogify:
+
+networks:
+  blogify-network:
+    driver: bridge
