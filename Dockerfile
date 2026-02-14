@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libssl-dev \
     && docker-php-ext-install \
-    pdo_mysql \
+    pdo_pgsql \
     mbstring \
     exif \
     pcntl \
