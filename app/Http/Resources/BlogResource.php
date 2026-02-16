@@ -14,6 +14,18 @@ class BlogResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'content' => $this->content,
+            // i need it to be auto generated
+            'author' => new UserResource($this->whenLoaded('author')),
+            'like_count' => $this->likesCount(),
+            'comment_count' => $this->commentsCount(),
+            'comments' => CommentResource::collection($this->comments),
+            // i need to make the blog invisible if this date is in future 
+            // but i need author to access it 
+            'publish_at' => $this->publish_at->format("Y-m-d H:i:s"),
+        ];
     }
 }

@@ -24,7 +24,7 @@ class LoginController extends Controller
         return [
             'user' => new UserResource($user),
             'token' => $token
-        ]; 
+        ];
     }
 
     /**
@@ -32,30 +32,31 @@ class LoginController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        \Log::info('Logout attempt', [
-            'headers' => $request->headers->all(),
-            'bearer_token' => $request->bearerToken(),
-            'user' => $request->user(),
-            'all_tokens' => $request->user() ? $request->user()->tokens->toArray() : 'No user'
-        ]);
-    
+        // \Log::info('Logout attempt', [
+        //     'headers' => $request->headers->all(),
+        //     'bearer_token' => $request->bearerToken(),
+        //     'user' => $request->user(),
+        //     'all_tokens' => $request->user() ? $request->user()->tokens->toArray() : 'No user'
+        // ]);
+
         // Check if user is authenticated
-        if (!$request->user()) {
-            return response()->json(['message' => 'User not authenticated'], 401);
-        }
-    
+        // no need for it auth middleware does it for us
+        // if (!$request->user()) {
+        //     return response()->json(['message' => 'User not authenticated'], 401);
+        // }
+
         // Try different approaches
-        try {
-            // Approach 1: Delete current token
-            $request->user()->currentAccessToken()->delete();
-            
-            // Approach 2: If above fails, delete by token string
-            // $token = $request->bearerToken();
-            // $request->user()->tokens()->where('token', hash('sha256', $token))->delete();
-            
-            return response()->noContent();
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Logout failed: ' . $e->getMessage()], 500);
-        }
+        // try {
+        // Approach 1: Delete current token
+        $request->user()->currentAccessToken()->delete();
+
+        // Approach 2: If above fails, delete by token string
+        // $token = $request->bearerToken();
+        // $request->user()->tokens()->where('token', hash('sha256', $token))->delete();
+
+        return response()->noContent();
+        // } catch (\Exception $e) {
+        //     return response()->json(['message' => 'Logout failed: ' . $e->getMessage()], 500);
+        // }
     }
 }
