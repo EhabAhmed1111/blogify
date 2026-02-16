@@ -18,9 +18,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
         Route::apiResource('blogs', BlogController::class);
 
+        // this is endpoint for like or remove like
         Route::post('like/{blog}', [UserController::class, 'like'])->name('like');
 
         Route::post('comment/{blog}', [UserController::class, 'commentToBLog'])->name('comment');
+
+        // this is endpoint for follow or unfollow
+        Route::post('follow/{user}', [UserController::class, 'follow'])->name('follow');
     });
 });
 

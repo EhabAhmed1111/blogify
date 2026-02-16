@@ -22,7 +22,7 @@ class BlogResource extends JsonResource
             'author' => new UserResource($this->whenLoaded('author')),
             'like_count' => $this->likesCount(),
             'comment_count' => $this->commentsCount(),
-            'comments' => CommentResource::collection($this->comments),
+            'comments' => CommentResource::collection($this->comments()->with('user')->get()),
             // i need to make the blog invisible if this date is in future 
             // but i need author to access it 
             'publish_at' => $this->publish_at->format("Y-m-d H:i:s"),

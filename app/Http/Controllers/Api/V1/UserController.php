@@ -54,4 +54,39 @@ class UserController extends Controller
             'data' => new CommentResource($blog->comments()->latest()->first()),
         ]);
     }
+
+    public function follow(User $user)
+    {
+        $follower = request()->user();
+        if ($follower->id === $user->id) {
+            return response()->json([
+                'message' => 'You cannot follow yourself',
+                'data' => null
+            ], 422);
+        }
+
+        // as i am the person that will follow the user
+        if ($follower->isFollowing($user)) {
+            $this->unfollowUser($follower, $user);
+            return response()->json([
+                'message' => 'User unfollowed successfully',
+                'data' => null
+            ]);
+        }
+        $this->followUser($follower, $user);
+        return response()->json([
+            'message' => 'User followed successfully',
+            'data' => null
+        ]);
+    }
+
+    private function followUser(User $follower, User $followed)
+    {
+        $follower->following()->attach($followed->id);
+    }
+
+    private function unfollowUser(User $follower, User $followed)
+    {
+        $follower->following()->detach($followed->id);
+    }
 }
