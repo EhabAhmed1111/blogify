@@ -4,19 +4,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
+        // add bio and social links to users table
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('cloudinary_profile_image_public_id')->nullable();
+            $table->string('cloudinary_cover_image_public_id')->nullable();
+            $table->string('cloudinary_profile_image_url')->nullable();
+            $table->string('cloudinary_cover_image_url')->nullable();
+            $table->string('bio')->nullable();
+            $table->string('social_links')->nullable();// this maybe change
             $table->rememberToken();
             $table->timestamps();
         });
