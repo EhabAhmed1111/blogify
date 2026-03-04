@@ -8,6 +8,11 @@ use App\Models\Blog;
 use App\Models\like;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\CloudinaryService;
+use App\Http\Requests\ProfileImageRequest;
+use App\Http\Requests\ProfileBioRequest;
+use App\Http\Requests\ProfileSocialLinksRequest;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
@@ -88,5 +93,81 @@ class UserController extends Controller
     private function unfollowUser(User $follower, User $followed)
     {
         $follower->following()->detach($followed->id);
+    }
+
+    public function addProfilePhoto(ProfileImageRequest $request, CloudinaryService $cloudinary)
+    {
+        $user = request()->user();
+        $image = $request->file('image');
+        $result = $cloudinary->upload($image);
+        auth()->user()->update(
+            [
+                'cloudinary_profile_image_public_id' => $result['public_id'],
+                'cloudinary_profile_image_url' => $result['secure_url'],
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Profile photo added successfully',
+            'data' => $result['secure_url']
+        ]);
+    }
+
+    public function addCoverPhoto(ProfileImageRequest $request, CloudinaryService $cloudinary)
+    {
+        $user = request()->user();
+        $image = $request->file('image');
+        $result = $cloudinary->upload($image);
+        auth()->user()->update(
+            [
+                'cloudinary_cover_image_public_id' => $result['public_id'],
+                'cloudinary_cover_image_url' => $result['secure_url'],
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Profile photo added successfully',
+            'data' => $result['secure_url']
+        ]);
+    }
+
+    // should i delete the privous photo??
+    private function updateProfilePhoto()
+    {
+
+    }
+
+    public function addBio(ProfileBioRequest $request)
+    {
+        $user = request()->user();
+        $user->update([
+            'bio' => $request->bio
+        ]);
+        return response()->json([
+            'message' => 'Bio added successfully',
+            'data' => $user->bio
+        ]);
+    }
+
+    public function addSocialLinke(ProfileSocialLinksRequest $request)
+    {
+        $user = request()->user();
+        $user->update([
+            'socialLinks' => $request->socialLinks
+        ]);
+        return response()->json([
+            'message' => 'Social links added successfully',
+            'data' => $user->socialLinks
+        ]);
+
+    }
+
+    //need some modify
+    // this no need to be authed
+    public function getProfileDetailesByUserId(User $user)
+    {
+        // name image coverimage bio bologs sociallinks 
+        return new UserResource($user);
+
     }
 }
