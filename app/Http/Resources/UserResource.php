@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'cover_image_url' => $this->cloudinary_cover_image_url,
             'bio' => $this->bio,
             'social_links' => $this->social_links,
+            'blogs' => BlogResource::collection($this->blogs),
         ];
     }
 }

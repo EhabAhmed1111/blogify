@@ -25,7 +25,25 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
         // this is endpoint for follow or unfollow
         Route::post('follow/{user}', [UserController::class, 'follow'])->name('follow');
+
+        Route::post('profile-image', [UserController::class, 'addProfilePhoto'])->name('profile-image');
+
+
+        Route::post('cover-image', [UserController::class, 'addCoverPhoto'])->name('cover-image');
+
+        Route::post('bio', [UserController::class, 'addBio'])->name('bio');
+
+
+        Route::post('social-links', [UserController::class, 'addSocialLinks'])->name('social-links');
+
+
     });
+});
+
+// this for unauth routes
+Route::prefix('v1')->group(function () {
+    Route::get('profile/{user}', [UserController::class, 'getProfileDetailesByUserId'])->name('profile');
+
 });
 
 

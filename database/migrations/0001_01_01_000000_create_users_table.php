@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->string('cloudinary_profile_image_url')->nullable();
             $table->string('cloudinary_cover_image_url')->nullable();
             $table->string('bio')->nullable();
-            $table->string('social_links')->nullable();// this maybe change
+            $table->string('social_links')->nullable();// this maybe change to seperate table
             $table->rememberToken();
             $table->timestamps();
         });

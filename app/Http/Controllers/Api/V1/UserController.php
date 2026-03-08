@@ -102,14 +102,14 @@ class UserController extends Controller
         $result = $cloudinary->upload($image);
         auth()->user()->update(
             [
-                'cloudinary_profile_image_public_id' => $result['public_id'],
-                'cloudinary_profile_image_url' => $result['secure_url'],
+                'cloudinary_profile_image_public_id' => $result['id'],
+                'cloudinary_profile_image_url' => $result['url'],
             ]
         );
 
         return response()->json([
             'message' => 'Profile photo added successfully',
-            'data' => $result['secure_url']
+            'data' => $result['url']
         ]);
     }
 
@@ -120,14 +120,14 @@ class UserController extends Controller
         $result = $cloudinary->upload($image);
         auth()->user()->update(
             [
-                'cloudinary_cover_image_public_id' => $result['public_id'],
-                'cloudinary_cover_image_url' => $result['secure_url'],
+                'cloudinary_cover_image_public_id' => $result['id'],
+                'cloudinary_cover_image_url' => $result['url'],
             ]
         );
 
         return response()->json([
-            'message' => 'Profile photo added successfully',
-            'data' => $result['secure_url']
+            'message' => 'Cover photo added successfully',
+            'data' => $result['url']
         ]);
     }
 
